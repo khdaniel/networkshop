@@ -26,12 +26,7 @@
     owner: root
     group: root
     mode: "{{ '0600' if item == 'server.key' else '0644' }}"
-  loop:
-    - ca.crt
-    - server.crt
-    - server.key
-    - dh.pem
-    - ta.key
+  loop: {{ openvpn_keys_certs }}
 
 # Рендеринг шаблона конфигурации OpenVPN
 - name: Render OpenVPN configuration file

@@ -1,0 +1,51 @@
+---
+# Основные задачи для настройки OpenVPN
+
+# Установка OpenVPN и необходимых зависимостей
+- name: Install OpenVPN and dependencies
+  apt:
+    name: openvpn
+    state: present
+    update_cache: yes
+
+# Включение IP-маршрутизации в Linux
+- name: Enable IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    sysctl_set: yes
+    reload: yes
+    ignoreerrors: yes
+
+# Список файлов для копирования
+- name: Copy OpenVPN certificates and keys
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/openvpn/{{ item }}"
+    owner: root
+    group: root
+    mode: "{{ '0600' if item == 'server.key' else '0644' }}"
+  loop:
+    - ca.crt
+    - server.crt
+    - server.key
+    - dh.pem
+    - ta.key
+
+# Рендеринг шаблона конфигурации OpenVPN
+- name: Render OpenVPN configuration file
+  template:
+    src: server.conf.j2
+    dest: /etc/openvpn/server.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart OpenVPN
+
+# Задача для перезапуска службы OpenVPN
+- name: Ensure OpenVPN is running and enabled
+  systemd:
+    name: openvpn@server
+    enabled: yes
+    state: started

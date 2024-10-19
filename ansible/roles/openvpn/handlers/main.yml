@@ -1,0 +1,7 @@
+---
+# Хук для перезапуска OpenVPN при изменении конфигурации
+
+- name: Restart OpenVPN
+  systemd:
+    name: openvpn@server
+    state: restarted

@@ -1,0 +1,54 @@
+---
+wireguard_port: 51820
+wireguard_network: 10.0.0.0/24
+
+wireguard_servers:
+  - name: router-1
+    public_key: "{{ lookup('file', '../files/server1_public.key') }}"
+    private_key: "{{ lookup('file', '../files/server1_private.key') }}"
+    ip_address: "10.0.0.1/24"
+    peers:
+      - public_key: "{{ lookup('file', '../files/server2_public.key') }}"
+        allowed_ips: "10.0.0.2/32"
+        endpoint: "192.168.50.22:51820"
+      - public_key: "{{ lookup('file', '../files/server3_public.key') }}"
+        allowed_ips: "10.0.0.3/32"
+        endpoint: "192.168.50.23:51820"
+
+  - name: router-2
+    public_key: "{{ lookup('file', '../files/server2_public.key') }}"
+    private_key: "{{ lookup('file', '../files/server2_private.key') }}"
+    ip_address: "10.0.0.2/24"
+    peers:
+      - public_key: "{{ lookup('file', 'files/server1_public.key') }}"
+        allowed_ips: "10.0.0.1/32"
+        endpoint: "192.168.50.21:51820"
+      - public_key: "{{ lookup('file', 'files/server3_public.key') }}"
+        allowed_ips: "10.0.0.3/32"
+        endpoint: "192.168.50.23:51820"
+
+  - name: router-3
+    public_key: "{{ lookup('file', '../files/server3_public.key') }}"
+    private_key: "{{ lookup('file', '../files/server3_private.key') }}"
+    ip_address: "10.0.0.3/24"
+    peers:
+      - public_key: "{{ lookup('file', '../files/server1_public.key') }}"
+        allowed_ips: "10.0.0.1/32"
+        endpoint: "192.168.50.21:51820"
+      - public_key: "{{ lookup('file', '../files/server2_public.key') }}"
+        allowed_ips: "10.0.0.2/32"
+        endpoint: "192.168.50.22:51820"
+
+  - name: router-4
+    public_key: "{{ lookup('file', '../files/server3_public.key') }}"
+    private_key: "{{ lookup('file', '../files/server3_private.key') }}"
+    ip_address: "10.0.0.3/24"
+    peers:
+      - public_key: "{{ lookup('file', '../files/server1_public.key') }}"
+        allowed_ips: "10.0.0.1/32"
+        endpoint: "192.168.50.21:51820"
+      - public_key: "{{ lookup('file', '../files/server2_public.key') }}"
+        allowed_ips: "10.0.0.2/32"
+        endpoint: "192.168.50.22:51820"        
+
+...

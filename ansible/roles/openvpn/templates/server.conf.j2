@@ -1,0 +1,22 @@
+port {{ openvpn_port }}
+proto {{ openvpn_protocol }}
+dev tun
+ca /etc/openvpn/ca.crt
+cert /etc/openvpn/server.crt
+key /etc/openvpn/server.key
+dh /etc/openvpn/dh.pem
+tls-auth /etc/openvpn/ta.key 0
+cipher AES-256-CBC
+persist-key
+persist-tun
+user nobody
+group nogroup
+server {{ openvpn_ip }} {{ openvpn_netmask }}
+ifconfig-pool-persist ipp.txt
+push "route {{ openvpn_route }}"
+keepalive 10 120
+comp-lzo
+max-clients 100
+status openvpn-status.log
+log-append  /var/log/openvpn.log
+verb 3

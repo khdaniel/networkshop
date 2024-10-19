@@ -1,0 +1,43 @@
+---
+# Основные задачи для настройки WireGuard
+
+# Установка WireGuard и зависимостей
+- name: Install WireGuard
+  apt:
+    name: wireguard
+    state: present
+    update_cache: yes
+
+# Включение IP-маршрутизации в Linux
+- name: Enable IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    sysctl_set: yes
+    reload: yes
+    ignoreerrors: yes
+
+# Создание директории для конфигураций
+- name: Create WireGuard config directory
+  file:
+    path: /etc/wireguard
+    state: directory
+    mode: '0700'
+
+# Генерация конфигурации для каждого сервера
+- name: Generate WireGuard configuration
+  template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    mode: '0600'
+  loop: "{{ wireguard_servers }}"
+  when: inventory_hostname == item.name
+  notify: Restart WireGuard
+
+# Запуск WireGuard
+- name: Ensure WireGuard is running
+  systemd:
+    name: wg-quick@wg0
+    enabled: yes
+    state: started

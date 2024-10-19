@@ -1,0 +1,20 @@
+all:
+  children:
+    routers:
+      children:
+        ovpn:
+          hosts:
+            router-4:
+              ansible_host: 192.168.110.4
+        wg:
+          hosts:
+            router-1:
+              ansible_host: 192.168.110.1
+            router-2:
+              ansible_host: 192.168.110.2
+            router-3:
+              ansible_host: 192.168.110.3
+    clients:
+      children:
+        client-1:
+          ansible_host: 192.168.110.5
